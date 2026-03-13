@@ -30,16 +30,6 @@ The bot has demonstrated profitable performance in testing. Below is a screensho
 <img width="510" height="243" alt="image" src="https://github.com/user-attachments/assets/5d49678b-18be-4db8-b01b-66db5f0e183d" />
 
 
-
-**Test Results Summary:**
-- **Initial Profit:** $28.08 (Dec 20, 2025 6:00 PM)
-- **Final Profit:** $923.41 (Dec 22, 2025 6:00 AM)
-- **Time Period:** ~36 hours
-- **Performance:** Consistent upward trend with significant profit accumulation
-- **Growth:** Over 3,200% increase in profit during the test period
-
-*Note: These results are from a test environment. Real-world performance may vary based on market conditions, wallet selection, and configuration parameters.*
-
 ---
 
 ## System Architecture
