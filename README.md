@@ -36,6 +36,10 @@ The bot has demonstrated profitable performance in testing. Below is a screensho
 
 <img width="645" height="863" alt="image" src="https://github.com/user-attachments/assets/1f5612f1-2baa-4f78-99e4-0ae2d0c29e34" />
 
+<img width="645" height="863" alt="image" src="https://github.com/user-attachments/assets/e6652959-7568-4324-8d9d-23945f64c866" />
+
+<img width="645" height="863" alt="image" src="https://github.com/user-attachments/assets/eb1b059d-c125-45fa-a967-b1c2954305bf" />
+
 ---
 
 ## System Architecture
