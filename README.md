@@ -2,17 +2,6 @@
 
 A **production-grade, real-time copy trading system** for **Polymarket**, designed to automatically mirror trades from selected wallets with high reliability, low latency, and robust risk controls. Built in **TypeScript** with **Node.js**, the bot integrates directly with Polymarket's **Central Limit Order Book (CLOB)** API for institutional-level execution.
 
----
-
-## 💝 Support the Project
-
-If you find this bot helpful and profitable, we'd greatly appreciate your support! Consider sending 10% of your profits to help maintain and improve this project:
-
-**Wallet Address:** `4GNqE1cn7wRZyGsv8MHHMf8C6QSc3Mk3fWYkLdTNf7EX`
-
-Your support helps us continue developing and maintaining this tool. Thank you! 🙏
-
----
 
 ## Overview
 
@@ -30,7 +19,7 @@ The Polymarket Copy Trading Bot continuously monitors target wallets and replica
 ---
 
 
-> ⚠️ **Past performance does not guarantee future results.** Trading prediction markets involves significant risk. Use responsibly and only with capital you can afford to lose.
+>  **Past performance does not guarantee future results.** Trading prediction markets involves significant risk. Use responsibly and only with capital you can afford to lose.
 
 ---
 
@@ -38,7 +27,8 @@ The Polymarket Copy Trading Bot continuously monitors target wallets and replica
 
 The bot has demonstrated profitable performance in testing. Below is a screenshot showing the profit/loss progression over a test period:
 
-<img width="562" height="303" alt="image" src="https://github.com/user-attachments/assets/299fb74b-ba4d-4d3d-8871-cf6d148574f8" />
+<img width="510" height="243" alt="image" src="https://github.com/user-attachments/assets/5d49678b-18be-4db8-b01b-66db5f0e183d" />
+
 
 
 **Test Results Summary:**
