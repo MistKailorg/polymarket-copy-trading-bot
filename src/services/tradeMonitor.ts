@@ -19,9 +19,7 @@ let temp_trades: UserActivityInterface[] = [];
 
 const init = async () => {
     const trades = await UserActivity.find().exec();
-    // Cast through unknown because Mongoose returns Document instances
-    // and we only use these for logging / in-memory processing.
-    temp_trades = trades.map((trade) => trade.toObject() as unknown as UserActivityInterface);
+    temp_trades = trades.map((trade) => trade as UserActivityInterface);
     console.log('temp_trades', temp_trades);
 };
 
