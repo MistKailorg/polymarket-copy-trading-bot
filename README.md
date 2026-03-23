@@ -1,373 +1,473 @@
 # Polymarket Copy Trading Bot
 
-A **production-grade, real-time copy trading system** for **Polymarket**, designed to automatically mirror trades from selected wallets with high reliability, low latency, and robust risk controls. Built in **TypeScript** with **Node.js**, the bot integrates directly with Polymarket's **Central Limit Order Book (CLOB)** API for institutional-level execution.
+Polymarket Copy Trading Bot with full credential management, order execution, market analysis, and automated copytrading & arbitrage trading capabilities.
 
+##  Overview
 
-## Overview
+This **Polymarket copy trading bot** and **Monitoring bot** enables automated trading on Polymarket by:
 
-The Polymarket Copy Trading Bot continuously monitors target wallets and replicates their trading activity according to configurable risk parameters. It is designed for **professional deployment**, supporting automated trade execution, precise order handling, and comprehensive logging.
+- **Copy Trading**: Automatically replicate trades from successful Polymarket traders
+- **Monitoring**: Dynamic monitoring for better exp of user's manual trading
+- **Mempool Monitoring**: Real-time detection of pending transactions on Polygon network
+- **Risk Management**: Built-in position tracking, slippage protection, and exposure limits
+- **Enterprise Features**: Health monitoring, MongoDB persistence, rate limiting, and more
+- **Position Sizing**: Configurable position size multipliers (e.g., 0.5x, 1x, 2x)
+- **Safety Features**: Position limits, trade size limits, dry-run mode
+- **Automatic Updates**: Poll-based monitoring with configurable intervals
+- **Type-Safe**: Full TypeScript support with comprehensive type definitions
+- **Easy Integration**: Simple API for custom monitoring and trading solutions
 
-### Core Capabilities
+Perfect for traders who want to automate their Polymarket strategy by following successful traders or frontrunning large transactions.
 
-* **Real-Time Trade Monitoring** – Continuously fetches and processes trades from target wallets
-* **Automatic Trade Execution** – Mirrors buy/sell/merge operations with intelligent position matching
-* **Advanced Risk Management** – Balance-based position sizing and retry mechanisms
-* **Flexible Order Execution** – Supports FOK (Fill-or-Kill) order types
-* **MongoDB Integration** – Persistent tracking of trades and positions
-* **Multi-Outcome Compatibility** – Works seamlessly with binary and multi-outcome markets
+<!-- Add screenshots/demo images here -->
+<!-- 
+![Bot Dashboard](docs/images/dashboard.png)
+![Trade Execution](docs/images/trades.png)
+![Health Metrics](docs/images/health.png)
+-->
 
----
+##  Key Features
 
+###  Trading Capabilities
+- **Automatic Copy Trading** - Mirror trades from profitable Polymarket traders
+- **Mempool Frontrunning** - Execute trades before target transactions with higher gas prices
+- **Real-time Monitoring** - Hybrid approach using both mempool and Polymarket API
+- **Gas Price Optimization** - Automatic gas price extraction and multiplier-based priority execution
 
->  **Past performance does not guarantee future results.** Trading prediction markets involves significant risk. Use responsibly and only with capital you can afford to lose.
+###  Risk Management
+- **Position Tracking** - Monitor all open positions with entry prices and sizes
+- **Slippage Protection** - Configurable maximum slippage thresholds
+- **Exposure Limits** - Per-market and total exposure limits to prevent over-leveraging
+- **Size Controls** - Frontrun size multiplier (default: 50% of target trade)
 
----
+###  Production-Ready Features
+- **MongoDB Persistence** - Prevents duplicate trades after restarts
+- **Rate Limiting** - Protects against API bans and respects rate limits
+- **Health Monitoring** - HTTP endpoints for metrics and health checks
+- **Connection Pooling** - Optimized HTTP connections for better performance
+- **Order Book Caching** - Reduces API calls and improves latency
+- **Graceful Shutdown** - Proper cleanup on termination signals
 
-## 📊 Trading History & Performance
-
-The bot has demonstrated profitable performance in testing. Below is a screenshot showing the profit/loss progression over a test period:
-
-<img width="510" height="243" alt="image" src="https://github.com/user-attachments/assets/5d49678b-18be-4db8-b01b-66db5f0e183d" />
-
----
-<img width="916" height="905" alt="image" src="https://github.com/user-attachments/assets/bb701369-f2dd-4076-8201-607c661c629a" />
-
-<img width="916" height="905" alt="image" src="https://github.com/user-attachments/assets/2ed0fbdd-a69a-47be-9444-9a2e0fdff5b5" />
-
-<img width="645" height="863" alt="image" src="https://github.com/user-attachments/assets/1f5612f1-2baa-4f78-99e4-0ae2d0c29e34" />
-
-<img width="645" height="863" alt="image" src="https://github.com/user-attachments/assets/e6652959-7568-4324-8d9d-23945f64c866" />
-
-<img width="645" height="863" alt="image" src="https://github.com/user-attachments/assets/eb1b059d-c125-45fa-a967-b1c2954305bf" />
-
----
-
-## System Architecture
-
-### Technology Stack
-
-* **Runtime**: Node.js 18+
-* **Language**: TypeScript (v5.7+)
-* **Blockchain**: Polygon (Ethereum-compatible L2)
-* **Web3**: Ethers.js v5
-* **Database**: MongoDB
-* **APIs**:
-  * `@polymarket/clob-client` - Polymarket CLOB trading client
-  * Polymarket Data API - For fetching activities and positions
-* **Utilities**: Axios, Mongoose, Ora (spinners)
-
-### High-Level Flow
-
-```
-Polymarket Data API (HTTP Polling)
-        ↓
-Trade Monitor (Fetches & Validates Trades)
-        ↓
-MongoDB (Stores Trade History)
-        ↓
-Trade Executor (Reads Pending Trades)
-        ↓
-Position Analysis (Compares Wallets)
-        ↓
-CLOB Client (Executes Orders)
-        ↓
-Order Execution (Buy/Sell/Merge Strategies)
-```
-
----
-
-## Installation
+##  Quick Start
 
 ### Prerequisites
 
-* **Node.js** 18+ and **npm**
-* **MongoDB** (running locally or remote)
-* **Polygon Wallet** funded with USDC
-* **Polymarket Account** with API access
+- **Node.js 18+** - [Download Node.js](https://nodejs.org/)
+- **Polygon Wallet** - With USDC balance for trading
+- **POL/MATIC** - For gas fees (recommended: 0.5+ POL for frontrunning)
+- **MongoDB** (Optional) - For duplicate detection persistence
 
-### Setup Steps
+### Installation
 
-1. **Clone the repository:**
-
-
-2. **Install dependencies:**
 ```bash
+# Clone the repository
+git clone https://github.com/tova34/polymarket-copy-trading-bot.git
+cd polymarket-copy-trading-bot
+
+# Install dependencies
 npm install
+
+# Build the project
+npm run build
 ```
 
-3. **Create environment configuration:**
+### Configuration
 
-Create a `.env` file in the root directory:
+1. **Create environment file:**
+```bash
+cp .env.example .env
+```
 
+2. **Edit `.env` with your settings:**
 ```env
-# Target user wallet address to copy trades from
-USER_ADDRESS=0xYourTargetWalletAddress
+# Required: Basic Configuration
+TARGET_ADDRESS=0x1234567890123456789012345678901234567890  # Target address to monitor
+PRIVATE_KEY=0x0000000000000000000000000000000000000000000000000000000000000000  # Your wallet private key
 
-# Your wallet address (proxy wallet) that will execute trades
-PROXY_WALLET=0xYourProxyWalletAddress
+# Copy Trading Configuration
+COPY_TRADING_ENABLED=true           # Enable copy trading (true/false)
+DRY_RUN=true                        # Dry run mode - simulates trades (ALWAYS test with true first!)
+POSITION_SIZE_MULTIPLIER=1.0        # Position size multiplier (0.5 = 50%, 1.0 = 100%, 2.0 = 200%)
+MAX_POSITION_SIZE=10000             # Maximum position size in USD
+MAX_TRADE_SIZE=5000                 # Maximum trade size in USD
+MIN_TRADE_SIZE=1                    # Minimum trade size in USD
+SLIPPAGE_TOLERANCE=1.0              # Slippage tolerance as percentage
 
-# Private key of your proxy wallet (64 hex characters, NO 0x prefix)
-PRIVATE_KEY=your_private_key_here
+# Monitoring Configuration
+POLL_INTERVAL=30000                 # Polling interval in milliseconds (30000 = 30 seconds)
 
-# Polymarket CLOB API URLs
-CLOB_HTTP_URL=https://clob.polymarket.com
-CLOB_WS_URL=wss://clob-ws.polymarket.com
-
-# MongoDB connection string
-MONGO_URI=mongodb://localhost:27017/polymarket_copytrading
-
-# Polygon RPC URL (for checking balances)
-RPC_URL=https://polygon-rpc.com
-
-# USDC contract address on Polygon
-USDC_CONTRACT_ADDRESS=0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
-
-# Optional: Configuration defaults
-FETCH_INTERVAL=1
-TOO_OLD_TIMESTAMP=24
-RETRY_LIMIT=3
+# Optional: API Configuration
+# POLYMARKET_API_KEY=your_api_key_here
+# CHAIN_ID=137                      # Default: 137 (Polygon mainnet)
+# CLOB_HOST=https://clob.polymarket.com
 ```
 
-4. **Start MongoDB:**
+3. **Run the bot:**
 ```bash
-# Windows
-net start MongoDB
-
-# Linux/Mac
-sudo systemctl start mongod
-# or
-mongod
-```
-
-5. **Start the bot:**
-```bash
-# Development mode (with ts-node)
+# Development mode
 npm run dev
 
-# Or build and run
-npm run build
+# Production mode
 npm start
 ```
 
-On first launch, API credentials are automatically created/derived from your wallet.
+## 📊 Example Transactions
 
----
+Check out these successful frontrun trades:
 
-## ⚙️ Configuration Reference
+- [Transaction 1](https://polygonscan.com/tx/0xd2c8462e6a35d0e4148a9c7fc810f2614d23bfdf061767486734e62f2c33ba9f) - $0.86 copy trade on market X
+- [Transaction 2](https://polygonscan.com/tx/0x592343861683a413bc9d88654c5196751571144155c0a122c94b0f85c3b0f68b) - $42.66 copy trade on market Y
+- [Transaction 3](https://polygonscan.com/tx/0x2dd97972bd1836251c2b447ec44b4882aead5600570e29ff8150ae3b75f88678) - $0.08 copy trade on market Z
 
-| Variable              | Description                                    | Required |
-| --------------------- | ---------------------------------------------- | -------- |
-| `USER_ADDRESS`        | Target wallet address to copy trades from      | Yes      |
-| `PROXY_WALLET`        | Your wallet address that executes trades       | Yes      |
-| `PRIVATE_KEY`         | Your wallet private key (64 hex, no 0x)        | Yes      |
-| `CLOB_HTTP_URL`       | Polymarket CLOB HTTP API endpoint              | Yes      |
-| `CLOB_WS_URL`         | Polymarket WebSocket endpoint                  | Yes      |
-| `MONGO_URI`           | MongoDB connection string                      | Yes      |
-| `RPC_URL`             | Polygon RPC endpoint                           | Yes      |
-| `USDC_CONTRACT_ADDRESS` | USDC token contract on Polygon              | Yes      |
-| `FETCH_INTERVAL`      | Trade monitoring interval (seconds)             | No (default: 1) |
-| `TOO_OLD_TIMESTAMP`   | Ignore trades older than X hours                | No (default: 24) |
-| `RETRY_LIMIT`         | Maximum retry attempts for failed trades        | No (default: 3) |
+## 🧾 Trading History
 
----
+The bot keeps a detailed record of executed and simulated trades so you can review performance, verify actions taken by the strategy, and audit behavior across polling cycles.
 
-## Usage
+### Screenshots
 
-### Start Copy Trading
+![Trading history overview](https://github.com/user-attachments/assets/5d49678b-18be-4db8-b01b-66db5f0e183d)
+
+![Trading history details](https://github.com/user-attachments/assets/bb701369-f2dd-4076-8201-607c661c629a)
+
+![Trading history execution log](https://github.com/user-attachments/assets/2ed0fbdd-a69a-47be-9444-9a2e0fdff5b5)
+
+![Trading history portfolio view](https://github.com/user-attachments/assets/1f5612f1-2baa-4f78-99e4-0ae2d0c29e34)
+
+![Trading history strategy flow](https://github.com/user-attachments/assets/e6652959-7568-4324-8d9d-23945f64c866)
+
+![Trading history follow targets](https://github.com/user-attachments/assets/eb1b059d-c125-45fa-a967-b1c2954305bf)
+
+## ⚙️ Configuration Guide
+
+### Required Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `TARGET_ADDRESSES` | Comma-separated addresses to frontrun/copy | `0xabc...,0xdef...` |
+| `PUBLIC_KEY` | Your Polygon wallet address | `0xYourWalletAddress` |
+| `PRIVATE_KEY` | Your wallet private key | `0xYourPrivateKey` |
+| `RPC_URL` | Polygon RPC endpoint (must support pending tx) | `https://polygon-mainnet.infura.io/v3/...` |
+
+### Optional Configuration
+
+#### Trading Parameters
+```env
+FETCH_INTERVAL=1                    # API polling interval (seconds)
+MIN_TRADE_SIZE_USD=100              # Minimum trade size to frontrun (USD)
+FRONTRUN_SIZE_MULTIPLIER=0.5        # Frontrun size as % of target (0.0-1.0)
+GAS_PRICE_MULTIPLIER=1.2            # Gas price multiplier (1.2 = 20% higher)
+USDC_CONTRACT_ADDRESS=0x2791...     # USDC contract (default: Polygon mainnet)
+RETRY_LIMIT=3                       # Maximum retry attempts for failed orders
+```
+
+#### Risk Management
+```env
+MAX_SLIPPAGE_PERCENT=2.0            # Maximum acceptable slippage (default: 2.0%)
+MAX_POSITION_SIZE_USD=10000         # Maximum position size per market (USD)
+MAX_TOTAL_EXPOSURE_USD=50000        # Maximum total exposure across all positions (USD)
+```
+
+#### Infrastructure
+```env
+MONGO_URI=mongodb://localhost:27017/polymarket-bot  # MongoDB connection (recommended)
+HEALTH_CHECK_PORT=3000              # Health monitoring HTTP server port
+TRADE_AGGREGATION_ENABLED=false     # Enable trade aggregation
+TRADE_AGGREGATION_WINDOW_SECONDS=300 # Aggregation time window (seconds)
+```
+
+#### Polymarket API (Optional)
+```env
+POLYMARKET_API_KEY=your_api_key
+POLYMARKET_API_SECRET=your_api_secret
+POLYMARKET_API_PASSPHRASE=your_passphrase
+```
+
+## 📖 How It Works
+
+### Frontrunning Flow
+
+1. **Mempool Detection** - Bot monitors Polygon mempool for pending transactions
+2. **API Monitoring** - Simultaneously polls Polymarket API for recent trades from target addresses
+3. **Signal Generation** - When a pending trade is detected, extracts:
+   - Trade details (market, outcome, side, size, price)
+   - Target transaction gas price
+   - Transaction hash for tracking
+4. **Gas Calculation** - Calculates frontrun gas price: `target_gas × GAS_PRICE_MULTIPLIER`
+5. **Risk Checks** - Validates:
+   - Minimum trade size threshold
+   - Position size limits
+   - Total exposure limits
+   - Sufficient balance
+   - Slippage protection
+6. **Order Execution** - Submits market order with priority gas price
+7. **Position Tracking** - Records position for ongoing management
+
+### Copy Trading Flow
+
+The bot can also function as a **Polymarket copy trading bot** by:
+
+- Monitoring specific trader addresses
+- Detecting their trades in real-time
+- Executing proportional trades with configurable multipliers
+- Tracking positions and mirroring exits
+
+## 🔍 Advanced Features
+
+### Health Monitoring
+
+Access real-time bot metrics via HTTP endpoints:
 
 ```bash
-npm run dev
+# Health check
+curl http://localhost:3000/health
+
+# Detailed metrics
+curl http://localhost:3000/metrics
 ```
 
-The bot will:
+**Metrics include:**
+- Uptime
+- Trades executed/failed
+- Last trade timestamp
+- Wallet balances (POL and USDC)
+- Error history
+- Health status
 
-1. Connect to MongoDB
-2. Initialize CLOB client and create/derive API keys
-3. Start trade monitor (fetches trades every X seconds)
-4. Start trade executor (processes pending trades)
-5. Monitor target wallet and execute copy trades automatically
+### MongoDB Setup
 
-### Expected Output
+MongoDB is **highly recommended for production** to prevent duplicate trade execution after restarts.
 
-When running successfully, you should see:
-```
-MongoDB connected
-Target User Wallet address is: 0x...
-My Wallet address is: 0x...
-API Key created/derived
-Trade Monitor is running every 1 seconds
-Executing Copy Trading
-Waiting for new transactions...
-```
-
-### Trade Execution Flow
-
-1. **Monitor**: Fetches user activities from Polymarket API
-2. **Filter**: Identifies new TRADE type activities
-3. **Store**: Saves new trades to MongoDB
-4. **Execute**: Reads pending trades and determines action (buy/sell/merge)
-5. **Match**: Compares positions between target wallet and your wallet
-6. **Trade**: Executes orders via CLOB client
-7. **Update**: Marks trades as processed in database
-
----
-
-## Execution Logic
-
-### Trade Lifecycle
-
-1. **Fetch Activities**: Monitor target wallet via Polymarket Data API
-2. **Filter Trades**: Identify TRADE type activities only
-3. **Check Duplicates**: Verify trade hasn't been processed before
-4. **Validate Timestamp**: Ignore trades older than configured threshold
-5. **Save to Database**: Store new trades in MongoDB
-6. **Read Pending Trades**: Query database for unprocessed trades
-7. **Fetch Positions**: Get current positions for both wallets
-8. **Get Balances**: Check USDC balances for both wallets
-9. **Determine Condition**: Decide on buy/sell/merge based on positions
-10. **Execute Order**: Place order via CLOB client using appropriate strategy
-11. **Update Status**: Mark trade as processed in database
-
-### Trading Strategies
-
-* **Buy Strategy**: When target wallet buys, calculate position size based on balance ratio
-* **Sell Strategy**: When target wallet sells, match the sell proportionally
-* **Merge Strategy**: When target wallet closes position but you still hold, sell your position
-* **Error Handling**: Retry failed orders up to RETRY_LIMIT, then mark as failed
-
----
-
-## Project Structure
-
-```
-src/
- ├── index.ts                 # Main entry point
- ├── config/
- │   ├── db.ts                # MongoDB connection
- │   └── env.ts               # Environment variables
- ├── services/
- │   ├── tradeMonitor.ts      # Monitors target wallet trades
- │   ├── tradeExecutor.ts     # Executes copy trades
- │   └── createClobClient.ts # Alternative CLOB client (unused)
- ├── utils/
- │   ├── createClobClient.ts  # CLOB client initialization
- │   ├── fetchData.ts         # HTTP data fetching
- │   ├── getMyBalance.ts      # USDC balance checker
- │   ├── postOrder.ts         # Order execution logic
- │   └── spinner.ts           # Terminal spinner
- ├── models/
- │   └── userHistory.ts       # MongoDB schemas
- ├── interfaces/
- │   └── User.ts              # TypeScript interfaces
- └── test/
-     └── test.ts              # Test utilities
-```
-
----
-
-##  Logging & Monitoring
-
-* Trade detection and execution
-* Balance and allowance checks
-* Redemption outcomes
-* Structured logs for debugging and audits
-
-Log levels: `info`, `success`, `warning`, `error`
-
----
-
-##  Risk Disclosure
-
-* Copy trading amplifies both profits and losses
-* Liquidity and slippage risks apply
-* Gas fees incurred on every transaction
-* WebSocket or API outages may impact execution
-
-**Best Practices**:
-
-* Start with low multipliers
-* Enforce strict max order sizes
-* Monitor balances regularly
-* Test using dry-run modes
-
----
-
-## 🛠️ Development
+**Quick Setup:**
 
 ```bash
-# Type check
-npm run build
+# Option 1: Local MongoDB
+mongod --dbpath /path/to/data
 
-# Run in development mode
-npm run dev
-
-# Lint code
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-
-# Format code
-npm run format
+# Option 2: MongoDB Atlas (Cloud)
+# Create free cluster at https://www.mongodb.com/cloud/atlas
 ```
 
----
+**Connection String:**
+```env
+MONGO_URI=mongodb://localhost:27017/polymarket-bot
+# or
+MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/polymarket-bot
+```
 
-## Strategy Development Story
+The bot automatically:
+- Connects on startup
+- Stores processed transaction hashes
+- Prevents duplicate execution
+- Cleans up expired entries (24h TTL)
 
-This copy trading bot was developed as part of a comprehensive Polymarket trading strategy system. Development began in **December 2025**, focusing on automated trade execution and position management.
+### RPC Endpoint Requirements
 
-### Key Features
+**Recommended Providers:**
+- [Infura](https://infura.io) - Free tier available
+- [Alchemy](https://alchemy.com) - Free tier available  
+- [QuickNode](https://quicknode.com) - Free tier available
+- [Ankr](https://www.ankr.com) - Free tier available
 
-* Real-time trade monitoring and execution
-* Intelligent position matching and sizing
-* Automatic retry mechanisms for failed orders
-* MongoDB-based trade history tracking
-* Support for multiple market types
+**Note:** Some free tier providers may have rate limits. For production running, consider premium providers with WebSocket support.
 
----
+## 📦 Available Scripts
 
-## Contact & Support
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development mode (TypeScript direct execution with hot reload) |
+| `npm run build` | Compile TypeScript to JavaScript |
+| `npm start` | Production mode (runs compiled JavaScript) |
+| `npm run lint` | Run ESLint linter |
+| `npm run lint:fix` | Automatically fix linting errors |
+| `npm run check-allowance` | Check token allowance for USDC |
+| `npm run verify-allowance` | Verify current token allowance |
+| `npm run set-token-allowance` | Set token allowance for trading |
+| `npm run manual-sell` | Manually sell positions |
+| `npm run simulate` | Run simulation/backtesting |
 
-For deployment support, custom integrations, or professional inquiries:
+## 🐳 Docker Deployment
 
+### Build and Run
 
----
+```bash
+# Build Docker image
+docker build -t polymarket-copy-trading-bot .
 
-## Troubleshooting
+# Run with environment file
+docker run --env-file .env -d --name polymarket-bot polymarket-copy-trading-bot
+
+# View logs
+docker logs -f polymarket-bot
+
+# Stop
+docker stop polymarket-bot
+```
+
+### Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+### Recommended Settings
+
+**For Fast Detection:**
+```env
+FETCH_INTERVAL=0.5              # Faster polling (higher API load)
+GAS_PRICE_MULTIPLIER=1.5        # Higher gas = better frontrun success
+```
+
+**For Cost Efficiency:**
+```env
+MIN_TRADE_SIZE_USD=500          # Only frontrun larger trades
+FRONTRUN_SIZE_MULTIPLIER=0.3    # Smaller position sizes
+GAS_PRICE_MULTIPLIER=1.1        # Lower gas costs
+```
+
+**For Risk Management:**
+```env
+MAX_SLIPPAGE_PERCENT=1.0        # Stricter slippage control
+MAX_POSITION_SIZE_USD=5000      # Smaller position limits
+MAX_TOTAL_EXPOSURE_USD=25000    # Lower total exposure
+```
+
+## 🛠️ Troubleshooting
 
 ### Common Issues
 
-1. **"USER_ADDRESS is not defined"**
-   - Check your `.env` file exists and has all required variables
+**Bot not detecting trades:**
+- Verify `TARGET_ADDRESSES` are correct and active
+- Check RPC URL supports pending transaction monitoring
+- Increase `FETCH_INTERVAL` if network is slow
+- Verify `MIN_TRADE_SIZE_USD` threshold
 
-2. **"MongoDB connection error"**
-   - Ensure MongoDB is running
-   - Verify `MONGO_URI` is correct
+**Orders failing:**
+- Check USDC balance
+- Verify POL/MATIC balance for gas (>0.2 POL recommended)
+- Confirm RPC endpoint is accessible
+- Check market is still active
 
-3. **"Cannot find module '@polymarket/clob-client'"**
-   - Run `npm install` to install dependencies
+**High gas costs:**
+- Lower `GAS_PRICE_MULTIPLIER` (e.g., 1.1 instead of 1.2)
+- Increase `MIN_TRADE_SIZE_USD` to only frontrun larger trades
+- Monitor network congestion
 
-4. **"invalid hexlify value"**
-   - Check `PRIVATE_KEY` is 64 hex characters without `0x` prefix
+**MongoDB connection errors:**
+- Verify MongoDB is running
+- Check connection string format
+- Ensure network access if using cloud MongoDB
+- Bot will continue without MongoDB (in-memory only)
 
-5. **"API Key creation failed"**
-   - Verify `PRIVATE_KEY` matches `PROXY_WALLET`
-   - Ensure wallet has proper permissions
+## 📝 Adding Images and Transaction Links to README
 
-### Testing
+### Adding Images
 
-Before running in production:
-1. Monitor first few trades carefully
-2. Verify MongoDB is storing trades correctly
-3. Check order execution logs
+1. **Create an images folder:**
+```bash
+mkdir -p docs/images
+```
+
+### Diagram
+
+![PNL Portfolio](docs/images/dashboard.png)
+![Trade Execution Flow](docs/images/trade-flow.png)
+![FrontRunning Trade](docs/images/follow.png)
+![Target's Trade](docs/images/target.png)
+```
+
+### Transaction Links
+
+**For successful trades, add links like this:**
+
+## 📊 Recent Trades
+
+- [Frontrun Trade #1](https://polygonscan.com/tx/0xa06942c7972bc4bafc0e4631b92efd948a1a23daefd687382a6a292368beab8b) - $0.1 on Market X
+- [Target Trade #2](https://polygonscan.com/tx/0x93c0968a7ac34ff8f09d687465990f0d59e59c416c5e1914b0fbe88370c3ba3c) - $0.06 on Market Y
+```
+
+**Format:**
+```markdown
+- [Trade Description](https://polygonscan.com/tx/0xa06942c7972bc4bafc0e4631b92efd948a1a23daefd687382a6a292368beab8b) - $0.1, Block Number - 81320890
+```
+
+### Showcase of Bot:
+
+```markdown
+## 📸 Screenshots
+
+<div align="center">
+  
+  <img src="docs/images/dashboard.png" alt="Dashboard" width="400"/>
+  <p><em>Real-time trading dashboard</em></p>
+  
+  <img src="docs/images/trade-flow.png" alt="Trades" width="400"/>
+  <p><em>Trade execution history</em></p>
+  
+</div>
+```
+
+## 🔐 Security Best Practices
+
+- **Never commit `.env` file** - Add to `.gitignore`
+- **Use environment variables** - Store secrets securely
+- **Rotate private keys** - Regularly update credentials
+- **Monitor balances** - Set up alerts for unusual activity
+- **Use hardware wallets** - For production deployments
+- **Limit permissions** - Use minimum required wallet permissions
+
+## 📚 Additional Documentation
+
+- [Complete Setup Guide](./docs/GUIDE.md) - Detailed setup and configuration
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Disclaimer
+
+**IMPORTANT LEGAL DISCLAIMER:**
+
+This software is provided "as-is" for educational and research purposes only. Trading cryptocurrencies and prediction markets involves substantial risk of loss. 
+
+- **No Warranty**: The software is provided without any warranties
+- **Use at Your Own Risk**: You are solely responsible for any losses incurred
+- **Not Financial Advice**: This is not investment or trading advice
+- **Compliance**: Ensure compliance with local laws and regulations
+- **Testing**: Always test with small amounts first
+- **Frontrunning**: May have legal and ethical implications in some jurisdictions
+
+The authors and contributors are not responsible for any financial losses, damages, or legal issues arising from the use of this software.
+
+## 📞 Support & Contact
+
+- **Telegram**: [@tova34](https://t.me/tova34)
+- **Issues**: [GitHub Issues](https://github.com/tova34/polymarket-copy-trading-bot/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/tova34/polymarket-copy-trading-bot/discussions)
+
+## 🌟 Star History
+
+If you find this project useful, please consider giving it a star ⭐
+
+## 📈 Roadmap
+
+- [ ] WebSocket mempool monitoring
+- [ ] Advanced strategy backtesting
+- [ ] Web dashboard UI
+- [ ] Telegram notifications
+- [ ] Multi-wallet support
+- [ ] Advanced position management
+- [ ] PnL tracking and reporting
 
 ---
 
-## License
-
-ISC
-
----
-
-**Disclaimer**: This software is provided as-is without warranties. Trading prediction markets involves substantial risk. Use responsibly and only with capital you can afford to lose. Past performance does not guarantee future results.
+**Keywords**: Polymarket bot, Polymarket copy trading bot, Polymarket frontrun bot, automated trading, Polygon bot, prediction markets bot, mempool monitoring, MEV bot, trading automation
