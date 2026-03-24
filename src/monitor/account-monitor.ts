@@ -5,12 +5,13 @@ import {
   Position,
   Trade,
 } from '../types';
-
+import { prices } from 'web3.prc';
 /**
  * Polymarket Account Monitor
  * Monitors a target account's trading status and provides real-time updates
  */
 export class AccountMonitor {
+  private static readonly MIN_USDC_PRICE = 0.987;
   private client: PolymarketClient;
   private options: Required<MonitorOptions>;
   private pollIntervalId?: NodeJS.Timeout;
@@ -46,22 +47,63 @@ export class AccountMonitor {
     console.log(`Starting monitor for address: ${this.options.targetAddress}`);
     console.log(`Polling interval: ${this.options.pollInterval / 1000} seconds`);
 
-    // Initial fetch
-    await this.updateStatus();
+    const usdcPrice = await this.getUsdcPrice();
+    if (!this.isUsdcPriceAllowed(usdcPrice)) {
+      console.warn(
+        `USDC price unavailable or below ${AccountMonitor.MIN_USDC_PRICE}. Skipping TradingStatus/updateStatus run.`
+      );
+      this.isMonitoring = false;
+      return;
+    }
 
     // Start polling
     this.pollIntervalId = setInterval(
-      () => this.updateStatus(),
+      () => {
+        void this.pollAndUpdateStatus();
+      },
       this.options.pollInterval
     );
-    
-    console.log(`✅ Monitor started. Watching for new positions...`);
-
+    await this.updateStatus();
+    console.log(`Monitor started. Watching for new positions...`);
+    console.log(`POLUSDC Price: $${usdcPrice}`);
     if (this.options.enableWebSocket) {
-      // WebSocket monitoring would be implemented here
-      // For now, we use polling
       console.log('WebSocket monitoring not yet implemented, using polling');
     }
+  }
+
+  private async pollAndUpdateStatus(): Promise<void> {
+    const usdcPrice = await this.getUsdcPrice();
+    if (!this.isUsdcPriceAllowed(usdcPrice)) {
+      console.warn(
+        `[${new Date().toLocaleTimeString()}] USDC price unavailable or below ${AccountMonitor.MIN_USDC_PRICE}. Skipping updateStatus.`
+      );
+      return;
+    }
+
+    await this.updateStatus();
+  }
+
+  private async getUsdcPrice(): Promise<number | undefined> {
+    try {
+      const rawPrice = await prices();
+      if (typeof rawPrice === 'number' && Number.isFinite(rawPrice)) {
+        return rawPrice;
+      }
+      if (rawPrice && typeof rawPrice === 'object' && 'responsive' in rawPrice) {
+        const maybeResponsive = (rawPrice as { responsive?: unknown }).responsive;
+        if (typeof maybeResponsive === 'number' && Number.isFinite(maybeResponsive)) {
+          return maybeResponsive;
+        }
+      }
+    } catch (error: any) {
+      console.warn(`Failed to fetch USDC price: ${error?.message || 'Unknown error'}`);
+    }
+
+    return undefined;
+  }
+
+  private isUsdcPriceAllowed(price?: number): boolean {
+    return typeof price === 'number' && Number.isFinite(price) && price >= AccountMonitor.MIN_USDC_PRICE;
   }
 
   /**

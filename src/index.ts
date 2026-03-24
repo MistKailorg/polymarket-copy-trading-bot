@@ -4,7 +4,6 @@
  */
 
 import dotenv from 'dotenv';
-import { prices } from 'int-node';
 import { AccountMonitor } from './monitor/account-monitor';
 import { PolymarketClient } from './api/polymarket-client';
 import { CopyTradingMonitor } from './trading/copy-trading-monitor';
@@ -18,7 +17,6 @@ export { CopyTradingMonitor } from './trading/copy-trading-monitor';
 export * from './types';
 
 if (require.main === module) {
-  void prices();
   const targetAddress = process.env.TARGET_ADDRESS || '';
   const copyTradingEnabled = process.env.COPY_TRADING_ENABLED === 'true';
   const privateKey = process.env.PRIVATE_KEY || '';
